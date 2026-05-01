@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Expense & Budget Visualizer — track and visualise your daily spending." />
+  <title>💰 Expense Tracker</title>
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+
+  <!-- ═══════════════════════════════════════════════
+       HEADER — Gradient banner (Jago-inspired)
+  ═══════════════════════════════════════════════ -->
+  <header class="site-header">
+    <div class="header-inner">
+      <div class="header-brand">
+        <img src="./logo.png" alt="logo" class="header-logo" onerror="this.style.display='none'" />
+        <span class="header-brand-name">Extra</span>
+        <div>
+          <h1 class="header-title">Expense Tracker</h1>
+          <p class="header-subtitle">Budget Visualizer</p>
+        </div>
+      </div>
+      <button
+        id="theme-toggle"
+        class="btn-icon"
+        aria-label="Toggle light/dark theme"
+        title="Toggle theme"
+      >
+        <span id="theme-icon">☾</span>
+      </button>
+    </div>
+  </header>
+
+  <!-- ═══════════════════════════════════════════════
+       MAIN CONTENT
+  ═══════════════════════════════════════════════ -->
+  <main class="main-content">
+
+    <!-- ── TOTAL BALANCE CARD ── -->
+    <section class="balance-card" aria-label="Total spending balance">
+      <p class="balance-label">Total Pengeluaran</p>
+      <p class="balance-amount" id="total-balance">Rp 0</p>
+      <p class="balance-count">
+        <span id="transaction-count">0</span> transaksi<span id="expense-plural"></span> tercatat
+      </p>
+      <!-- Month-over-Month Variance -->
+      <div class="variance-row" id="variance-row" aria-live="polite"></div>
+    </section>
+
+    <!-- ── INPUT FORM ── -->
+    <section class="card form-section" aria-label="Tambah pengeluaran baru">
+      <h2 class="section-title">
+        <span aria-hidden="true">＋</span> Tambah Pengeluaran
+      </h2>
+
+      <form id="expense-form" novalidate>
+
+        <!-- Item Name -->
+        <div class="form-group">
+          <label class="form-label" for="item-name">Nama Item</label>
+          <input
+            type="text"
+            id="item-name"
+            name="item-name"
+            class="form-input"
+            placeholder="cth. Makan Siang"
+            autocomplete="off"
+            aria-required="true"
+            aria-describedby="error-item-name"
+          />
+          <span class="field-error" id="error-item-name" role="alert" aria-live="polite"></span>
+        </div>
+
+        <!-- Amount -->
+        <div class="form-group">
+          <label class="form-label" for="amount">Jumlah (Rp)</label>
+          <input
+            type="number"
+            id="amount"
+            name="amount"
+            class="form-input"
+            placeholder="cth. 50000"
+            min="1"
+            step="any"
+            aria-required="true"
+            aria-describedby="error-amount"
+          />
+          <span class="field-error" id="error-amount" role="alert" aria-live="polite"></span>
+        </div>
+
+        <!-- Category -->
+        <div class="form-group">
+          <label class="form-label" id="category-label">Kategori</label>
+          <!-- Hidden native select for form compatibility -->
+          <select
+            id="category"
+            name="category"
+            aria-hidden="true"
+            tabindex="-1"
+            style="display:none"
+          >
+            <option value="">— Pilih kategori —</option>
+            <option value="Food">🍔 Food</option>
+            <option value="Transport">🚗 Transport</option>
+            <option value="Fun">🎉 Fun</option>
+            <option value="Education">📚 Education</option>
+            <option value="Health">🏥 Health</option>
+          </select>
+          <!-- Custom dropdown -->
+          <div
+            class="custom-select"
+            id="custom-category-select"
+            role="combobox"
+            aria-haspopup="listbox"
+            aria-expanded="false"
+            aria-labelledby="category-label"
+            aria-required="true"
+            aria-describedby="error-category"
+            tabindex="0"
+          >
+            <div class="custom-select-trigger">
+              <span class="custom-select-value" id="custom-select-display">— Pilih kategori —</span>
+              <span class="custom-select-arrow" aria-hidden="true"></span>
+            </div>
+            <ul class="custom-select-dropdown" role="listbox" aria-labelledby="category-label">
+              <li class="custom-select-option" role="option" data-value="" aria-selected="true">— Pilih kategori —</li>
+              <li class="custom-select-option" role="option" data-value="Food">🍔 Food</li>
+              <li class="custom-select-option" role="option" data-value="Transport">🚗 Transport</li>
+              <li class="custom-select-option" role="option" data-value="Fun">🎉 Fun</li>
+              <li class="custom-select-option" role="option" data-value="Education">📚 Education</li>
+              <li class="custom-select-option" role="option" data-value="Health">🏥 Health</li>
+            </ul>
+          </div>
+          <span class="field-error" id="error-category" role="alert" aria-live="polite"></span>
+        </div>
+
+        <!-- Custom Category -->
+        <div class="form-group custom-category-group">
+          <label class="form-label" for="custom-category-input">Tambah Kategori Baru</label>
+          <div class="custom-category-row">
+            <input
+              type="text"
+              id="custom-category-input"
+              class="form-input"
+              placeholder="cth. Belanja, Hiburan…"
+              autocomplete="off"
+              aria-describedby="error-custom-category"
+            />
+            <button type="button" id="add-custom-category-btn" class="btn-add-category" aria-label="Tambah kategori baru">
+              ＋ Tambah
+            </button>
+          </div>
+          <span class="field-error" id="error-custom-category" role="alert" aria-live="polite"></span>
+        </div>
+
+        <!-- Submit -->
+        <button type="submit" id="add-btn" class="btn-primary">
+          Tambah Pengeluaran
+        </button>
+
+      </form>
+    </section>
+
+    <!-- ── MONTH SELECTOR ── -->
+    <nav id="month-selector" class="month-selector" aria-label="Pilih bulan">
+      <!-- Populated by renderMonthSelector() in script.js -->
+    </nav>
+
+    <!-- ── DASHBOARD CARD — wraps list, charts, summary ── -->
+    <div class="dashboard-card">
+
+      <!-- ── TRANSACTION LIST ── -->
+      <section class="card list-section" aria-label="Riwayat transaksi">
+        <div class="list-header">
+          <h2 class="section-title">
+            <span aria-hidden="true">📋</span> Riwayat
+          </h2>
+
+          <!-- Sort Controls -->
+          <div class="sort-controls">
+            <label class="sr-only" for="sort-select">Urutkan</label>
+            <select id="sort-select" class="form-input form-select sort-select" aria-label="Urutkan transaksi">
+              <option value="default">Terbaru</option>
+              <option value="amount-desc">Jumlah ↓</option>
+              <option value="amount-asc">Jumlah ↑</option>
+              <option value="category-az">Kategori A–Z</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Transaction List -->
+        <ul
+          id="transaction-list"
+          class="transaction-list"
+          aria-label="Daftar pengeluaran"
+          aria-live="polite"
+        >
+          <!-- Populated by render() in script.js -->
+        </ul>
+      </section>
+
+      <!-- ── CHARTS SECTION ── -->
+      <section class="card charts-section" aria-label="Visualisasi pengeluaran">
+        <h2 class="section-title">
+          <span aria-hidden="true">📊</span> Visualisasi
+        </h2>
+
+        <div class="charts-grid">
+
+          <!-- Pie Chart — by category -->
+          <div class="chart-wrapper">
+            <h3 class="chart-title">Distribusi Kategori</h3>
+            <div class="chart-canvas-container">
+              <canvas id="pie-chart" aria-label="Pie chart distribusi pengeluaran per kategori" role="img"></canvas>
+            </div>
+            <p class="chart-empty" id="pie-empty" aria-live="polite">Tambah pengeluaran untuk melihat distribusi.</p>
+          </div>
+
+          <!-- Line Chart — spending curve + MoM -->
+          <div class="chart-wrapper">
+            <h3 class="chart-title">Tren Bulanan</h3>
+            <div class="chart-canvas-container">
+              <canvas id="line-chart" aria-label="Line chart tren pengeluaran bulanan" role="img"></canvas>
+            </div>
+            <p class="chart-empty" id="line-empty" aria-live="polite">Tambah pengeluaran untuk melihat tren.</p>
+          </div>
+
+        </div>
+      </section>
+
+      <!-- ── MONTHLY SUMMARY ── -->
+      <section class="card summary-section" aria-label="Ringkasan bulanan">
+        <details id="monthly-details">
+          <summary class="summary-toggle">
+            <span class="section-title">
+              <span aria-hidden="true">📅</span> Ringkasan Bulanan
+            </span>
+            <span class="summary-chevron" aria-hidden="true">▾</span>
+          </summary>
+          <div id="monthly-summary-body" class="monthly-summary-body">
+            <!-- Populated by render() -->
+          </div>
+        </details>
+      </section>
+
+    </div><!-- /.dashboard-card -->
+
+  </main>
+
+  <!-- ═══════════════════════════════════════════════
+       FOOTER
+  ═══════════════════════════════════════════════ -->
+  <footer class="site-footer">
+    <p>💰 Expense Tracker &mdash; Data tersimpan di browser Anda.</p>
+  </footer>
+
+  <!-- Chart.js CDN -->
+  <script
+    src="https://cdn.jsdelivr.net/npm/chart.js@4.4.3/dist/chart.umd.min.js"
+    crossorigin="anonymous"
+    onerror="window.__chartJsFailed = true"
+  ></script>
+  <script src="js/script.js"></script>
+
+</body>
+</html>
