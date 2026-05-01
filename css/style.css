@@ -16,8 +16,8 @@
 /* ── 1. CSS Custom Properties ── */
 :root {
   /* Light theme (default — Jago-inspired) */
-  --bg-page:        #f2f4f7;
-  --bg-card:        #ffffff;
+  --bg-page:        #f4f8e3;
+  --bg-card:        hsl(60, 47%, 97%);
   --bg-card-hover:  #fafbfc;
   --bg-input:       #f7f8fa;
   --bg-header-from: #FF6B35;
@@ -68,13 +68,15 @@
   --bg-card:        #1a1d27;
   --bg-card-hover:  #22263a;
   --bg-input:       #22263a;
+  --bg-header-from: #a06c9b;
+  --bg-header-to:   #3f392a;
 
   --text-primary:   #e8eaf6;
   --text-secondary: #9fa8da;
   --text-muted:     #5c6080;
   --text-on-header: #ffffff;
 
-  --accent:         #FF8C5A;
+  --accent:         #a06c9b;
   --accent-2:       #F7C948;
   --accent-hover:   #bd7db9;
   --accent-dim:     rgba(255, 140, 90, 0.15);
